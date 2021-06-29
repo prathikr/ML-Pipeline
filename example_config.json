@@ -1,1 +1,4 @@
-{"test":"test"}
+{
+    "data_filename":"data/example_data.csv",
+    "outcome":"Survived"
+}
