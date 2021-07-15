@@ -1,20 +1,29 @@
 import json
 import pandas as pd
 from sklearn.model_selection import train_test_split
-from sklearn.linear_model import LogisticRegression
+from utils.modelFactory import ModelFactory
 
-def one_hot_encode(data_original):
+def one_hot_encode(data_original, cols):
     print("--- one_hot_encode ---")
     data = data_original.copy()
-    cols = ['Sex', 'Embarked']
 
     for categorical_var in cols:
-        if categorical_var in list(data.columns):
-            # one-hot encode variable
-            one_hot = pd.get_dummies(data[categorical_var], prefix=categorical_var, dummy_na=True)
-            data = data.drop(categorical_var, axis = 1)
-            data = data.join(one_hot)
+        # one-hot encode variable
+        one_hot = pd.get_dummies(data[categorical_var], prefix=categorical_var)
+        data = data.drop(categorical_var, axis = 1)
+        data = data.join(one_hot)
+    
+    print("Data shape after one_hot_encode:", data.shape)
+    return data
 
+def impute(data_original, strategy):
+    print("--- impute ---")
+    data = data_original.copy()
+
+    for col in data.columns:
+        data[col].fillna((data[col].mean()), inplace=True)
+
+    print("NaN counts:\n", data.isna().sum())
     return data
 
 class Pipeline():
@@ -23,52 +32,36 @@ class Pipeline():
         print("--- __init__ ---")
 
         self.config_filename = config_filename
-        valid = self.validate_config()
-        if not valid:
-            raise("pipeline constructor failed")
-
-    def validate_config(self):
-        print("--- validate config ---")
 
         with open(self.config_filename) as f:
-            config = json.load(f)
-            self.config = config
-        print("Config:", self.config)
+            self.config = json.load(f)
 
-        data_filename = self.config['data_filename']
-        self.data_filename = data_filename
-
-        return True
+        self.modelFactory = ModelFactory({})
 
     def preprocess(self):
         print("--- preprocess ---")
 
-        data = pd.read_csv(self.data_filename, index_col=0)
-        self.data = data
+        self.data = pd.read_csv(self.data_filename, index_col=0)
+        print("Original data shape:", self.data.shape)
 
-        data_one_hot_encoded = one_hot_encode(self.data)
-        print(data_one_hot_encoded.columns)
+        if len(self.config['preprocess']['one_hot_encode']) > 0:
+            self.data = one_hot_encode(self.data, self.config['preprocess']['one_hot_encode'])
 
-        for col in data_one_hot_encoded.columns:
-            data_one_hot_encoded[col].fillna(data_one_hot_encoded[col].mode()[0], inplace=True)
+        self.data = impute(self.data, self.config['preprocess']['impute'])
 
-        self.data = data_one_hot_encoded
-
-        self.X = self.data.drop(columns=['Survived'])
-        self.y = self.data['Survived']
-
+        self.X = self.data.drop(columns=[self.config['outcome']])
+        self.y = self.data[self.config['outcome']]
 
     def model(self):
         print("--- model ---")
 
         X_train, X_test, y_train, y_test = train_test_split(self.X, self.y, test_size=0.20, random_state=2017)
-        print("X_train.shape", X_train.shape, "y_train.shape", y_train.shape)
+        print("X_train.shape", X_train.shape, "X_test.shape", X_test.shape)
         
-        model = LogisticRegression(max_iter=1000)
-        self.model = model.fit(X_train,y_train)
+        model = self.modelFactory.initModel(self.config["model"])
+        self.model = model.fit(X_train, y_train)
 
-        print(model.score(X_test, y_test))
+        print(self.config["model"], "accuracy on test set:", model.score(X_test, y_test))
 
     def postprocess(self):
         print("--- postprocessing ---")
-        return True
