@@ -1,16 +1,16 @@
 {
     "data_filename": "data/example_data.csv",
     "outcome": "Survived",
-    "model": {
-        "name": "RandomForestClassifier",
-        "forward_feature_selection": true,
-        "optimization_metric": "f1"
-    },
     "preprocess": {
         "imputation_strategy": {
             "mean": ["Age" ,"SibSp", "Parch", "Fare"],
             "mode": ["Pclass", "Sex", "Embarked"]
         },
         "one_hot_encode": ["Pclass", "Sex", "Embarked"]
+    },
+    "model": {
+        "name": "RandomForestClassifier",
+        "forward_feature_selection": true,
+        "optimization_metric": "f1"
     }
 }

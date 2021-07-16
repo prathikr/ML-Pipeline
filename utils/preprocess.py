@@ -4,6 +4,7 @@ def one_hot_encode(data_original, cols):
     print('--- one_hot_encode ---')
     data = data_original.copy()
 
+    print('Features to encode:', cols)
     for categorical_var in cols:
         # one-hot encode variable
         one_hot = pd.get_dummies(data[categorical_var], prefix=categorical_var)
