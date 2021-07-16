@@ -14,15 +14,10 @@ failed = 0
 for config in config_files:
     print(f'--- running test for {config} ---')
 
-    try:
-        p = Pipeline(base_path + 'tests/configs/' + config)
-        p.preprocess()
-        p.model()
-        p.postprocess()
-    except Exception as e:
-        print(f'{config} test failed')
-        print(e)
-        failed += 1
+    p = Pipeline(base_path + 'tests/configs/' + config)
+    p.preprocess()
+    p.model()
+    p.postprocess()
 
     print('\n')
 

@@ -1,7 +1,11 @@
 {
     "data_filename": "data/example_data.csv",
     "outcome": "Survived",
-    "model": "LogisticRegression",
+    "model": {
+        "name": "LogisticRegression",
+        "forward_feature_selection": true,
+        "optimization_metric": "roc_auc"
+    },
     "preprocess": {
         "imputation_strategy": {
             "mean": ["Age" ,"SibSp", "Parch", "Fare"],

@@ -1,14 +1,16 @@
 {
     "data_filename": "data/example_data.csv",
     "outcome": "Survived",
-    "model": "LogisticRegression",
+    "model": {
+        "name": "LogisticRegression",
+        "forward_feature_selection": false,
+        "optimization_metric": "roc_auc"
+    },
     "preprocess": {
         "imputation_strategy": {
             "mean": ["Age" ,"SibSp", "Parch", "Fare"],
             "mode": ["Pclass", "Sex", "Embarked"]
         },
-        "one_hot_encode": ["Pclass", "Sex", "Embarked"],
-        "forward_feature_selection": true,
-        "forward_feature_selection_optimization_metric": "roc_auc"
+        "one_hot_encode": ["Pclass", "Sex", "Embarked"]
     }
 }

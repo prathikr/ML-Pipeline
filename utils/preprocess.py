@@ -31,7 +31,3 @@ def impute(data_original, strategy):
 
     print("NaN counts post-imputation:\n", data.isna().sum())
     return data
-
-def forward_feature_selection(data_original, optimization_metric):
-    print('--- forward_feature_selection ---')
-    pass
