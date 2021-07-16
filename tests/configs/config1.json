@@ -1,7 +1,7 @@
 {
     "data_filename": "data/example_data.csv",
     "outcome": "Survived",
-    "model": "LogisticRegression",
+    "model": "RandomForestClassifier",
     "preprocess": {
         "impute": true,
         "one_hot_encode": ["Pclass", "Sex", "Embarked"]

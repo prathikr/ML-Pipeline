@@ -4,7 +4,7 @@ from sklearn.model_selection import train_test_split
 from utils.modelFactory import ModelFactory
 
 def one_hot_encode(data_original, cols):
-    print("--- one_hot_encode ---")
+    print('--- one_hot_encode ---')
     data = data_original.copy()
 
     for categorical_var in cols:
@@ -13,17 +13,19 @@ def one_hot_encode(data_original, cols):
         data = data.drop(categorical_var, axis = 1)
         data = data.join(one_hot)
     
-    print("Data shape after one_hot_encode:", data.shape)
+    print('Data shape after one_hot_encode:', data.shape)
     return data
 
 def impute(data_original, strategy):
-    print("--- impute ---")
+    print('--- impute ---')
     data = data_original.copy()
+
+    print("NaN counts pre-imputation:\n", data.isna().sum())
 
     for col in data.columns:
         data[col].fillna((data[col].mean()), inplace=True)
 
-    print("NaN counts:\n", data.isna().sum())
+    print("NaN counts post-imputation:\n", data.isna().sum())
     return data
 
 class Pipeline():
@@ -31,9 +33,7 @@ class Pipeline():
     def __init__(self, config_filename):
         print("--- __init__ ---")
 
-        self.config_filename = config_filename
-
-        with open(self.config_filename) as f:
+        with open(config_filename) as f:
             self.config = json.load(f)
 
         self.modelFactory = ModelFactory({})
@@ -41,7 +41,7 @@ class Pipeline():
     def preprocess(self):
         print("--- preprocess ---")
 
-        self.data = pd.read_csv(self.data_filename, index_col=0)
+        self.data = pd.read_csv(self.config['data_filename'], index_col=0)
         print("Original data shape:", self.data.shape)
 
         if len(self.config['preprocess']['one_hot_encode']) > 0:
