@@ -19,8 +19,19 @@ def impute(data_original, strategy):
 
     print("NaN counts pre-imputation:\n", data.isna().sum())
 
-    for col in data.columns:
-        data[col].fillna((data[col].mean()), inplace=True)
+    for key in strategy:
+        cols = strategy[key]
+        for col in cols:
+            if key == 'mean':
+                data[col].fillna((data[col].mean()), inplace=True)
+            elif key == 'mode':
+                data[col].fillna((data[col].mode()[0]), inplace=True)
+            else:
+                raise Exception("imputation strategy unsupported")
 
     print("NaN counts post-imputation:\n", data.isna().sum())
     return data
+
+def forward_feature_selection(data_original, optimization_metric):
+    print('--- forward_feature_selection ---')
+    pass

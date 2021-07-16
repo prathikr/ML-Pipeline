@@ -3,7 +3,10 @@
     "outcome": "Survived",
     "model": "RandomForestClassifier",
     "preprocess": {
-        "impute": true,
+        "imputation_strategy": {
+            "mean": ["Age" ,"SibSp", "Parch", "Fare"],
+            "mode": ["Pclass", "Sex", "Embarked"]
+        },
         "one_hot_encode": ["Pclass", "Sex", "Embarked"]
     }
 }

@@ -3,7 +3,6 @@
     "outcome": "Survived",
     "model": "LogisticRegression",
     "preprocess": {
-        "impute": true,
         "imputation_strategy": {
             "mean": ["Age" ,"SibSp", "Parch", "Fare"],
             "mode": ["Pclass", "Sex", "Embarked"]
