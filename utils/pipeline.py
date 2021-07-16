@@ -2,31 +2,7 @@ import json
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from utils.modelFactory import ModelFactory
-
-def one_hot_encode(data_original, cols):
-    print('--- one_hot_encode ---')
-    data = data_original.copy()
-
-    for categorical_var in cols:
-        # one-hot encode variable
-        one_hot = pd.get_dummies(data[categorical_var], prefix=categorical_var)
-        data = data.drop(categorical_var, axis = 1)
-        data = data.join(one_hot)
-    
-    print('Data shape after one_hot_encode:', data.shape)
-    return data
-
-def impute(data_original, strategy):
-    print('--- impute ---')
-    data = data_original.copy()
-
-    print("NaN counts pre-imputation:\n", data.isna().sum())
-
-    for col in data.columns:
-        data[col].fillna((data[col].mean()), inplace=True)
-
-    print("NaN counts post-imputation:\n", data.isna().sum())
-    return data
+from utils.preprocess import *
 
 class Pipeline():
 
@@ -55,13 +31,12 @@ class Pipeline():
     def model(self):
         print("--- model ---")
 
-        X_train, X_test, y_train, y_test = train_test_split(self.X, self.y, test_size=0.20, random_state=2017)
-        print("X_train.shape", X_train.shape, "X_test.shape", X_test.shape)
+        self.X_train, self.X_test, self.y_train, self.y_test = train_test_split(self.X, self.y, test_size=0.20, random_state=2017)
+        print("X_train.shape", self.X_train.shape, "X_test.shape", self.X_test.shape)
         
         model = self.modelFactory.initModel(self.config["model"])
-        self.model = model.fit(X_train, y_train)
-
-        print(self.config["model"], "accuracy on test set:", model.score(X_test, y_test))
+        self.model = model.fit(self.X_train, self.y_train)
 
     def postprocess(self):
         print("--- postprocessing ---")
+        print(self.config["model"], "accuracy on test set:", self.model.score(self.X_test, self.y_test))

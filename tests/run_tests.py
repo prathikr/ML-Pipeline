@@ -19,8 +19,9 @@ for config in config_files:
         p.preprocess()
         p.model()
         p.postprocess()
-    except:
+    except Exception as e:
         print(f'{config} test failed')
+        print(e)
         failed += 1
 
     print('\n')
