@@ -1,10 +1,12 @@
 import json
 import pandas as pd
-from sklearn.model_selection import train_test_split
+import numpy as np
+from sklearn.model_selection import cross_validate
 from utils.modelFactory import ModelFactory
 from utils.preprocess import *
 from utils.model import *
 from utils.postprocess import *
+from math import sqrt
 
 class Pipeline():
 
@@ -12,45 +14,40 @@ class Pipeline():
         with open(config_filename) as f:
             self.config = json.load(f)
 
-    def preprocess(self):
-        print("--- preprocess ---")
-        self.data = pd.read_csv(self.config['data_filename'], index_col=0)
-        print("Original data shape:", self.data.shape)
+        self.modelFactory = ModelFactory({})
 
+    def preprocess(self):
         preprocess_args = self.config['preprocess']
+
+        self.data = pd.read_csv(self.config['data_filename'], index_col=0)
+        print("Original data shape:", self.data.shape, '\n')
+
+        print_statistics(self.data, self.config['outcome'])
         self.data = impute(self.data, preprocess_args['imputation_strategy'])
 
         if len(preprocess_args['one_hot_encode']) > 0:
             self.data = one_hot_encode(self.data, preprocess_args['one_hot_encode'])
 
-        print("Final data shape:", self.data.shape)
+        print('\nFinal data shape:', self.data.shape)
         self.X = self.data.drop(columns=[self.config['outcome']])
         self.y = self.data[self.config['outcome']]
 
     def model(self):
-        print("--- model ---")
-        self.modelFactory = ModelFactory({})
-
         model_args = self.config['model']
-        self.X_train, self.X_test, self.y_train, self.y_test = train_test_split(self.X, self.y, test_size=0.2)
-        print("X_train.shape", self.X_train.shape, "X_test.shape", self.X_test.shape)
-        
+
         model = self.modelFactory.initModel(model_args['name'])
 
         if model_args['forward_feature_selection']:
-            scores, ordered_features = forward_feature_selection(model, self.X_train, self.y_train, model_args['optimization_metric'])
+            scores, ordered_features = forward_feature_selection(model, self.X, self.y, model_args['optimization_metric'])
             optimal_n_features = scores.index(max(scores))
-            print('\nOptimal number of features:', optimal_n_features)
+            print('Optimal number of features:', optimal_n_features)
             optimal_features = ordered_features[:optimal_n_features]
 
-            self.X_train = self.X_train[optimal_features]
-            self.X_test = self.X_test[optimal_features]
+            self.X = self.X[optimal_features]
 
-        self.model = model.fit(self.X_train, self.y_train)
+        scores = cross_validate(clone(model), self.X, self.y, cv=5, scoring=[model_args['optimization_metric']], return_estimator=True)
+        confidence_level = 2.776 # corresponding z-score value for 95% confidence and 4 degrees of freedom (since we do 5 fold cv)
+        print(model_args['optimization_metric'], 'performance across 5 folds with 95% confidence:' ,round(scores['test_' + model_args['optimization_metric']].mean(), 4), '+/-', round(confidence_level * scores['test_' + model_args['optimization_metric']].std() / sqrt(len(scores['test_' + model_args['optimization_metric']])), 4))
 
     def postprocess(self):
-        print("--- postprocessing ---")
-
-        model_args = self.config['model']
-        test_score = evaluate(self.model, self.X_test, self.y_test, model_args['optimization_metric'])
-        print(model_args['name'], model_args['optimization_metric'], "on test set:", test_score)
+        postprocess_args = self.config['postprocess']

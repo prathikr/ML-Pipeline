@@ -12,5 +12,8 @@
         "name": "LogisticRegression",
         "forward_feature_selection": true,
         "optimization_metric": "roc_auc"
+    },
+    "postprocess": {
+        
     }
 }

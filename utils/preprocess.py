@@ -1,5 +1,10 @@
 import pandas as pd
 
+def print_statistics(data_original, outcome):
+    print('--- print_statistics ---')
+    print('Outcome distribution:', data_original[outcome].value_counts(), sep='\n') # outcome class distribution
+    print('NaN counts:', data_original.isna().sum(), sep='\n')
+
 def one_hot_encode(data_original, cols):
     print('--- one_hot_encode ---')
     data = data_original.copy()
@@ -18,7 +23,7 @@ def impute(data_original, strategy):
     print('--- impute ---')
     data = data_original.copy()
 
-    print("NaN counts pre-imputation:\n", data.isna().sum())
+    print('# NaNs pre-imputation:', data.isna().sum().sum())
 
     for key in strategy:
         cols = strategy[key]
@@ -29,6 +34,7 @@ def impute(data_original, strategy):
                 data[col].fillna((data[col].mode()[0]), inplace=True)
             else:
                 raise Exception("imputation strategy unsupported")
-
-    print("NaN counts post-imputation:\n", data.isna().sum())
+    print('# NaNs post-imputation:', data.isna().sum().sum())
+    if data.isna().sum().sum() > 0:
+        print('WARNING: Dataset still contains NaN values post-imputation!!!')
     return data

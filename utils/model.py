@@ -4,6 +4,7 @@ from sklearn.base import clone
 import matplotlib.pyplot as plt
 
 def forward_feature_selection(model, X, y, optimization_metric):
+    print('--- forward_feature_selection ---')
     features = list(X.columns)
     selected_features = []
     scores = []
@@ -31,4 +32,5 @@ def forward_feature_selection(model, X, y, optimization_metric):
     plt.xlabel('# of Features')
     plt.ylabel(optimization_metric)
     plt.plot(list(range(X.shape[1])), scores)
+    plt.show() # blocking call
     return scores, selected_features

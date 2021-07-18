@@ -12,5 +12,8 @@
         "name": "RandomForestClassifier",
         "forward_feature_selection": true,
         "optimization_metric": "f1"
+    },
+    "postprocess": {
+        
     }
 }
