@@ -14,3 +14,7 @@ Step 6: run the notebook, to make changes edit example_config.json <br>
 #### How to add a new imputation strategy:
 Step 1: Add strategy name and applicable columns to example_config.json under "imputation_strategy" section <br>
 Step 2: In preprocess.py add code support for your desired strategy under the impute(...) function <br>
+
+TODO:
+- add documentation on how to insert new dataset
+- add config file options/required parameters documentation
