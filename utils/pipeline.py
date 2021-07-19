@@ -2,7 +2,6 @@ import json
 import pandas as pd
 import numpy as np
 from sklearn.model_selection import cross_validate
-from utils.modelFactory import ModelFactory
 from utils.preprocess import *
 from utils.model import *
 from utils.postprocess import *
@@ -13,8 +12,6 @@ class Pipeline():
     def __init__(self, config_filename):
         with open(config_filename) as f:
             self.config = json.load(f)
-
-        self.modelFactory = ModelFactory({})
 
     def preprocess(self):
         preprocess_args = self.config['preprocess']
@@ -55,4 +52,3 @@ class Pipeline():
         postprocess_args = self.config['postprocess']
 
         self.feature_importance = feature_importance(self.scores['estimator'], self.model_name, postprocess_args['feature_importance_strategy'], self.X.columns)
-        print(self.feature_importance[['feat', 'feat_imp_mean', 'feat_imp_95_ci']])

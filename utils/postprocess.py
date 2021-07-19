@@ -31,5 +31,5 @@ def feature_importance(models, model_name, strategy, features):
     feat_imp['feat_imp_95_ci'] = confidence_level * feat_imp['feat_imp_std'] / sqrt(len(col_headers))
 
     feat_imp.sort_values(by='feat_imp_mean', ascending=False, inplace=True)
-
+    print(feat_imp[['feat', 'feat_imp_mean', 'feat_imp_95_ci']])
     return feat_imp
