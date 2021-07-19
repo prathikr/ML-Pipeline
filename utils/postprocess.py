@@ -30,6 +30,6 @@ def feature_importance(models, model_name, strategy, features):
     confidence_level = 2.776 # corresponding z-score value for 95% confidence and 4 degrees of freedom (since we do 5 fold cv)
     feat_imp['feat_imp_95_ci'] = confidence_level * feat_imp['feat_imp_std'] / sqrt(len(col_headers))
 
-    feat_imp.sort_values(by='feat_imp_mean', inplace=True)
+    feat_imp.sort_values(by='feat_imp_mean', ascending=False, inplace=True)
 
     return feat_imp
