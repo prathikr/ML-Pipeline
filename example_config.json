@@ -1,12 +1,11 @@
 {
-    "data_filename": "data/example_data.csv",
-    "outcome": "Survived",
+    "data_filename": "data/CAIS_engagement_data.csv",
+    "outcome": "engage30",
     "preprocess": {
         "imputation_strategy": {
-            "mean": ["Age" ,"SibSp", "Parch", "Fare"],
-            "mode": ["Pclass", "Sex", "Embarked"]
+            
         },
-        "one_hot_encode": ["Pclass", "Sex", "Embarked"]
+        "one_hot_encode": []
     },
     "model": {
         "name": "LogisticRegression",

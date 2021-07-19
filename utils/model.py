@@ -32,5 +32,4 @@ def forward_feature_selection(model, X, y, optimization_metric):
     plt.xlabel('# of Features')
     plt.ylabel(optimization_metric)
     plt.plot(list(range(X.shape[1])), scores)
-    plt.show() # blocking call
     return scores, selected_features
