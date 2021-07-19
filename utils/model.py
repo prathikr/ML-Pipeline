@@ -2,6 +2,16 @@ from sklearn.metrics import make_scorer, precision_score
 from sklearn.model_selection import cross_validate
 from sklearn.base import clone
 import matplotlib.pyplot as plt
+import importlib
+import sklearn
+
+def get_model(
+    model_name: str, import_module: str, model_params: dict
+) -> sklearn.base.BaseEstimator:
+    """Returns a scikit-learn model."""
+    model_class = getattr(importlib.import_module(import_module), model_name)
+    model = model_class(**model_params)  # Instantiates the model
+    return model
 
 def forward_feature_selection(model, X, y, optimization_metric):
     print('--- forward_feature_selection ---')

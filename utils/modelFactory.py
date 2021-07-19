@@ -6,10 +6,10 @@ class ModelFactory():
     def __init__(self, params):
         self.params = params
 
-    def initModel(self, model_name):
+    def initModel(self, model_name, params):
         if model_name == 'LogisticRegression':
-            return LogisticRegression(max_iter=1000)
+            return LogisticRegression(**params)
         elif model_name == 'RandomForestClassifier':
-            return RandomForestClassifier()
+            return RandomForestClassifier(**params)
         else:
             raise Exception(f'unsupported model type: {model_name}')

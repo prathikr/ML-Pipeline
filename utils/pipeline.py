@@ -36,7 +36,7 @@ class Pipeline():
         model_args = self.config['model']
         self.model_name = model_args['name']
 
-        model = self.modelFactory.initModel(self.model_name)
+        model = get_model(self.model_name, model_args['importlib'], model_args['params'])
 
         if model_args['forward_feature_selection']:
             scores, ordered_features = forward_feature_selection(model, self.X, self.y, model_args['optimization_metric'])
