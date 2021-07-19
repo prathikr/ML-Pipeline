@@ -34,20 +34,25 @@ class Pipeline():
 
     def model(self):
         model_args = self.config['model']
+        self.model_name = model_args['name']
 
-        model = self.modelFactory.initModel(model_args['name'])
+        model = self.modelFactory.initModel(self.model_name)
 
         if model_args['forward_feature_selection']:
             scores, ordered_features = forward_feature_selection(model, self.X, self.y, model_args['optimization_metric'])
             optimal_n_features = scores.index(max(scores))
             print('Optimal number of features:', optimal_n_features)
             optimal_features = ordered_features[:optimal_n_features]
+            print('Optimal features:', optimal_features)
 
             self.X = self.X[optimal_features]
 
-        scores = cross_validate(clone(model), self.X, self.y, cv=5, scoring=[model_args['optimization_metric']], return_estimator=True)
+        self.scores = cross_validate(clone(model), self.X, self.y, cv=5, scoring=[model_args['optimization_metric']], return_estimator=True)
         confidence_level = 2.776 # corresponding z-score value for 95% confidence and 4 degrees of freedom (since we do 5 fold cv)
-        print(model_args['optimization_metric'], 'performance across 5 folds with 95% confidence:' ,round(scores['test_' + model_args['optimization_metric']].mean(), 4), '+/-', round(confidence_level * scores['test_' + model_args['optimization_metric']].std() / sqrt(len(scores['test_' + model_args['optimization_metric']])), 4))
+        print(model_args['optimization_metric'], 'performance across 5 folds with 95% confidence:' ,round(self.scores['test_' + model_args['optimization_metric']].mean(), 4), '+/-', round(confidence_level * self.scores['test_' + model_args['optimization_metric']].std() / sqrt(len(self.scores['test_' + model_args['optimization_metric']])), 4))
 
     def postprocess(self):
         postprocess_args = self.config['postprocess']
+
+        self.feature_importance = feature_importance(self.scores['estimator'], self.model_name, postprocess_args['feature_importance_strategy'], self.X.columns)
+        print(self.feature_importance[['feat', 'feat_imp_mean', 'feat_imp_95_ci']])
