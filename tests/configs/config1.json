@@ -13,7 +13,9 @@
         "importlib": "sklearn.ensemble",
         "forward_feature_selection": true,
         "optimization_metric": "f1",
-        "params": {}
+        "params": {
+            
+        }
     },
     "postprocess": {
         "feature_importance_strategy": "built_in"

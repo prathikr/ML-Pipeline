@@ -1,22 +1,23 @@
 {
-    "data_filename": "data/CAIS_engagement_data.csv",
-    "outcome": "engage30",
+    "data_filename": "data/example_data.csv",
+    "outcome": "Survived",
     "preprocess": {
         "imputation_strategy": {
-            
+            "mean": ["Age" ,"SibSp", "Parch", "Fare"],
+            "mode": ["Pclass", "Sex", "Embarked"]
         },
-        "one_hot_encode": []
+        "one_hot_encode": ["Pclass", "Sex", "Embarked"]
     },
     "model": {
-        "name": "LogisticRegression",
-        "importlib": "sklearn.linear_model",
-        "forward_feature_selection": true,
+        "name": "RandomForestClassifier",
+        "importlib": "sklearn.ensemble",
+        "forward_feature_selection": false,
         "optimization_metric": "roc_auc",
         "params": {
-            "max_iter": 1000
+            
         }
     },
     "postprocess": {
-        "feature_importance_strategy": "built_in"
+        "feature_importance_strategy": "permutation_importance"
     }
 }

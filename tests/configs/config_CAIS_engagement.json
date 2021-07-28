@@ -1,0 +1,22 @@
+{
+    "data_filename": "data/CAIS_engagement_data.csv",
+    "outcome": "engage30",
+    "preprocess": {
+        "imputation_strategy": {
+            
+        },
+        "one_hot_encode": []
+    },
+    "model": {
+        "name": "LogisticRegression",
+        "importlib": "sklearn.linear_model",
+        "forward_feature_selection": true,
+        "optimization_metric": "roc_auc",
+        "params": {
+            "max_iter": 1000
+        }
+    },
+    "postprocess": {
+        "feature_importance_strategy": "built_in"
+    }
+}
