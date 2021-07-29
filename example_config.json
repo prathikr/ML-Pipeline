@@ -9,12 +9,12 @@
         "one_hot_encode": ["Pclass", "Sex", "Embarked"]
     },
     "model": {
-        "name": "RandomForestClassifier",
-        "importlib": "sklearn.ensemble",
-        "forward_feature_selection": false,
+        "name": "LogisticRegression",
+        "importlib": "sklearn.linear_model",
+        "forward_feature_selection": true,
         "optimization_metric": "roc_auc",
         "params": {
-            
+            "max_iter": 1000
         }
     },
     "postprocess": {

@@ -1,5 +1,7 @@
 import json
 import pandas as pd
+pd.set_option('display.max_columns', None)
+pd.set_option('display.max_rows', None)
 import numpy as np
 #from sklearn.model_selection import cross_validate
 from sklearn.model_selection import StratifiedKFold
@@ -8,7 +10,6 @@ from utils.preprocess import *
 from utils.model import *
 from utils.postprocess import *
 from math import sqrt
-from sklearn.base import clone
 
 class Pipeline():
 

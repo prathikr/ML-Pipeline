@@ -4,6 +4,18 @@ import numpy as np
 from sklearn.inspection import permutation_importance
 from sklearn.base import clone
 
+def aggregate_feature_importances(feat_imp, col_headers):
+    feat_imp['feat_imp_mean'] = feat_imp[col_headers].mean(axis=1)
+    feat_imp['feat_imp_std'] = feat_imp[col_headers].std(axis=1)
+    feat_imp['feat_imp_zeros'] = (feat_imp[col_headers] == 0).astype(int).sum(axis=1)
+
+    confidence_level = 2.776 # corresponding z-score value for 95% confidence and 4 degrees of freedom (since we do 5 fold cv)
+    feat_imp['feat_imp_95_ci'] = confidence_level * feat_imp['feat_imp_std'] / sqrt(len(col_headers))
+
+    feat_imp.sort_values(by='feat_imp_mean', ascending=False, inplace=True)
+    print(feat_imp[['feat', 'feat_imp_mean', 'feat_imp_95_ci']])
+    return feat_imp
+
 # collect feature importance values across training folds
 def feature_importance_built_in(models, model_name, features):
     print('--- feature_importance_built_in ---')
@@ -22,17 +34,7 @@ def feature_importance_built_in(models, model_name, features):
         idx += 1
     
     feat_imp = pd.DataFrame(data=d)
-    #print(feat_imp)
-    feat_imp['feat_imp_mean'] = feat_imp[col_headers].mean(axis=1)
-    feat_imp['feat_imp_std'] = feat_imp[col_headers].std(axis=1)
-    feat_imp['feat_imp_zeros'] = (feat_imp[col_headers] == 0).astype(int).sum(axis=1)
-
-    confidence_level = 2.776 # corresponding z-score value for 95% confidence and 4 degrees of freedom (since we do 5 fold cv)
-    feat_imp['feat_imp_95_ci'] = confidence_level * feat_imp['feat_imp_std'] / sqrt(len(col_headers))
-
-    feat_imp.sort_values(by='feat_imp_mean', ascending=False, inplace=True)
-    print(feat_imp[['feat', 'feat_imp_mean', 'feat_imp_95_ci']])
-    return feat_imp
+    return aggregate_feature_importances(feat_imp, col_headers)
 
 def feature_importance_permutation_importance(model, KFold_data):
     print('--- feature_importance_permutation_importance ---')
@@ -59,14 +61,5 @@ def feature_importance_permutation_importance(model, KFold_data):
         d[col_header] = r.importances_mean
 
     feat_imp = pd.DataFrame(data=d)
+    return aggregate_feature_importances(feat_imp, col_headers)
 
-    feat_imp['feat_imp_mean'] = feat_imp[col_headers].mean(axis=1)
-    feat_imp['feat_imp_std'] = feat_imp[col_headers].std(axis=1)
-    feat_imp['feat_imp_zeros'] = (feat_imp[col_headers] == 0).astype(int).sum(axis=1)
-
-    confidence_level = 2.776 # corresponding z-score value for 95% confidence and 4 degrees of freedom (since we do 5 fold cv)
-    feat_imp['feat_imp_95_ci'] = confidence_level * feat_imp['feat_imp_std'] / sqrt(len(col_headers))
-
-    feat_imp.sort_values(by='feat_imp_mean', ascending=False, inplace=True)
-    print(feat_imp[['feat', 'feat_imp_mean', 'feat_imp_95_ci']])
-    return feat_imp
